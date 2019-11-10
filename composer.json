@@ -6,6 +6,10 @@
         {
             "name": "Jonas Staudenmeir",
             "email": "mail@jonas-staudenmeir.de"
+        },
+        {
+            "name": "Hassan Raza Pasha",
+            "email": "e.hassanrazapasha@gmail.com"
         }
     ],
     "require": {
@@ -16,11 +20,11 @@
         "illuminate/pagination": "^6.0",
         "laravel/homestead": "^9.0",
         "phpunit/phpunit": "^8.0",
-        "staudenmeir/eloquent-eager-limit": "^1.4"
+        "paxha/eloquent-eager-limit": "^1.4"
     },
     "autoload": {
         "psr-4": {
-            "Staudenmeir\\EloquentHasManyDeep\\": "src/"
+            "Paxha\\HasManyThroughDeep\\": "src/"
         }
     },
     "autoload-dev": {
@@ -29,5 +33,5 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable" : true
+    "prefer-stable": true
 }

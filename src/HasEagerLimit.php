@@ -1,6 +1,6 @@
 <?php
 
-namespace Staudenmeir\EloquentHasManyDeep;
+namespace Paxha\HasManyThroughDeep;
 
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use RuntimeException;
@@ -29,8 +29,8 @@ trait HasEagerLimit
         if ($this->farParent->exists) {
             $this->query->limit($value);
         } else {
-            if (!class_exists('Staudenmeir\EloquentEagerLimit\Builder')) {
-                $message = 'Please install staudenmeir/eloquent-eager-limit to limit eager loading queries.'; // @codeCoverageIgnore
+            if (!class_exists('Paxha\EloquentEagerLimit\Builder')) {
+                $message = 'Please install paxha/eloquent-eager-limit to limit eager loading queries.'; // @codeCoverageIgnore
 
                 throw new RuntimeException($message); // @codeCoverageIgnore
             }

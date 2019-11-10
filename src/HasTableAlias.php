@@ -1,6 +1,6 @@
 <?php
 
-namespace Staudenmeir\EloquentHasManyDeep;
+namespace Paxha\HasManyThroughDeep;
 
 use Illuminate\Support\Str;
 

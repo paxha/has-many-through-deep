@@ -1,7 +1,8 @@
 <?php
 
-namespace Staudenmeir\EloquentHasManyDeep;
+namespace Paxha\HasManyThroughDeep;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -9,14 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
-class HasManyDeep extends HasManyThrough
+class HasManyThroughDeep extends HasManyThrough
 {
     use HasEagerLimit, RetrievesIntermediateTables;
 
     /**
      * The "through" parent model instances.
      *
-     * @var \Illuminate\Database\Eloquent\Model[]
+     * @var Model[]
      */
     protected $throughParents;
 
@@ -37,9 +38,9 @@ class HasManyDeep extends HasManyThrough
     /**
      * Create a new has many deep relationship instance.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $farParent
-     * @param \Illuminate\Database\Eloquent\Model[] $throughParents
+     * @param Builder $query
+     * @param Model $farParent
+     * @param Model[] $throughParents
      * @param array $foreignKeys
      * @param array $localKeys
      * @return void
@@ -76,7 +77,7 @@ class HasManyDeep extends HasManyThrough
     /**
      * Set the join clauses on the query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder|null $query
+     * @param Builder|null $query
      * @return void
      */
     protected function performJoin(Builder $query = null)
@@ -94,7 +95,7 @@ class HasManyDeep extends HasManyThrough
         foreach ($throughParents as $i => $throughParent) {
             $predecessor = $throughParents[$i - 1] ?? $this->related;
 
-            $prefix = $i === 0 && $alias ? $alias.'.' : '';
+            $prefix = $i === 0 && $alias ? $alias . '.' : '';
 
             $this->joinThroughParent($query, $throughParent, $predecessor, $foreignKeys[$i], $localKeys[$i], $prefix);
         }
@@ -103,9 +104,9 @@ class HasManyDeep extends HasManyThrough
     /**
      * Join a through parent table.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $throughParent
-     * @param \Illuminate\Database\Eloquent\Model $predecessor
+     * @param Builder $query
+     * @param Model $throughParent
+     * @param Model $predecessor
      * @param array|string $foreignKey
      * @param array|string $localKey
      * @param string $prefix
@@ -127,7 +128,7 @@ class HasManyDeep extends HasManyThrough
             $foreignKey = $foreignKey[1];
         }
 
-        $second = $predecessor->qualifyColumn($prefix.$foreignKey);
+        $second = $predecessor->qualifyColumn($prefix . $foreignKey);
 
         $query->join($throughParent->getTable(), $first, '=', $second);
 
@@ -139,7 +140,7 @@ class HasManyDeep extends HasManyThrough
     /**
      * Determine whether a "through" parent instance of the relation uses SoftDeletes.
      *
-     * @param \Illuminate\Database\Eloquent\Model $instance
+     * @param Model $instance
      * @return bool
      */
     public function throughParentInstanceSoftDeletes(Model $instance)
@@ -186,13 +187,13 @@ class HasManyDeep extends HasManyThrough
      * @param array $columns
      * @param string $pageName
      * @param int $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return LengthAwarePaginator
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
         $columns = $this->shouldSelect($columns);
 
-        $columns = array_diff($columns, [$this->getQualifiedFirstKeyName().' as laravel_through_key']);
+        $columns = array_diff($columns, [$this->getQualifiedFirstKeyName() . ' as laravel_through_key']);
 
         $this->query->addSelect($columns);
 
@@ -208,13 +209,13 @@ class HasManyDeep extends HasManyThrough
      * @param array $columns
      * @param string $pageName
      * @param int|null $page
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @return Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
         $columns = $this->shouldSelect($columns);
 
-        $columns = array_diff($columns, [$this->getQualifiedFirstKeyName().' as laravel_through_key']);
+        $columns = array_diff($columns, [$this->getQualifiedFirstKeyName() . ' as laravel_through_key']);
 
         $this->query->addSelect($columns);
 
@@ -253,10 +254,10 @@ class HasManyDeep extends HasManyThrough
     /**
      * Add the constraints for a relationship query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
+     * @param Builder $query
+     * @param Builder $parentQuery
      * @param array|mixed $columns
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -274,21 +275,21 @@ class HasManyDeep extends HasManyThrough
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
+     * @param Builder $query
+     * @param Builder $parentQuery
      * @param array|mixed $columns
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
-        $query->from($query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash());
+        $query->from($query->getModel()->getTable() . ' as ' . $hash = $this->getRelationCountHash());
 
         $this->performJoin($query);
 
         $query->getModel()->setTable($hash);
 
         return $query->select($columns)->whereColumn(
-            $parentQuery->getQuery()->from.'.'.$query->getModel()->getKeyName(),
+            $parentQuery->getQuery()->from . '.' . $query->getModel()->getKeyName(),
             '=',
             $this->getQualifiedFirstKeyName()
         );
@@ -323,7 +324,7 @@ class HasManyDeep extends HasManyThrough
     /**
      * Get the "through" parent model instances.
      *
-     * @return \Illuminate\Database\Eloquent\Model[]
+     * @return Model[]
      */
     public function getThroughParents()
     {

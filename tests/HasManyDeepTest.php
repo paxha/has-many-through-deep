@@ -3,7 +3,7 @@
 namespace Tests;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Paxha\HasManyThroughDeep\HasManyThroughDeep;
 use Tests\Models\Comment;
 use Tests\Models\Country;
 use Tests\Models\Post;
@@ -107,7 +107,7 @@ class HasManyDeepTest extends TestCase
 
     public function testEagerLoadingWithLimit()
     {
-        $countries = Country::with(['comments' => function (HasManyDeep $query) {
+        $countries = Country::with(['comments' => function (HasManyThroughDeep $query) {
             $query->orderByDesc('comments.id')->limit(1);
         }])->get();
 
@@ -124,7 +124,7 @@ class HasManyDeepTest extends TestCase
 
     public function testLazyEagerLoadingWithLimit()
     {
-        $countries = Country::all()->load(['comments' => function (HasManyDeep $query) {
+        $countries = Country::all()->load(['comments' => function (HasManyThroughDeep $query) {
             $query->orderByDesc('comments.id')->take(1);
         }]);
 

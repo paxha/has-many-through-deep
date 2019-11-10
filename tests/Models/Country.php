@@ -6,42 +6,42 @@ class Country extends Model
 {
     public function comment()
     {
-        return $this->hasOneDeep(Comment::class, [User::class, Post::class])->withDefault();
+        return $this->hasOneThroughDeep(Comment::class, [User::class, Post::class])->withDefault();
     }
 
     public function commentFromRelations()
     {
-        return $this->hasOneDeepFromRelations($this->posts(), (new Post)->comments());
+        return $this->hasOneThroughDeepFromRelations($this->posts(), (new Post)->comments());
     }
 
     public function comments()
     {
-        return $this->hasManyDeep(Comment::class, [User::class, Post::class]);
+        return $this->hasManyThroughDeep(Comment::class, [User::class, Post::class]);
     }
 
     public function commentsFromRelations()
     {
-        return $this->hasManyDeepFromRelations([$this->posts(), (new Post)->comments()]);
+        return $this->hasManyThroughDeepFromRelations([$this->posts(), (new Post)->comments()]);
     }
 
     public function permissions()
     {
-        return $this->hasManyDeep(Permission::class, [User::class, 'role_user', Role::class]);
+        return $this->hasManyThroughDeep(Permission::class, [User::class, 'role_user', Role::class]);
     }
 
     public function permissionsFromRelations()
     {
-        return $this->hasManyDeepFromRelations($this->permissions());
+        return $this->hasManyThroughDeepFromRelations($this->permissions());
     }
 
     public function permissionsWithPivotAlias()
     {
-        return $this->hasManyDeep(Permission::class, [User::class, RoleUser::class.' as alias', Role::class]);
+        return $this->hasManyThroughDeep(Permission::class, [User::class, RoleUser::class.' as alias', Role::class]);
     }
 
     public function permissionsWithPivotAliasFromRelations()
     {
-        return $this->hasManyDeepFromRelations($this->permissionsWithPivotAlias());
+        return $this->hasManyThroughDeepFromRelations($this->permissionsWithPivotAlias());
     }
 
     public function posts()
@@ -51,6 +51,6 @@ class Country extends Model
 
     public function roles()
     {
-        return $this->hasManyDeep(Role::class, [User::class, 'role_user']);
+        return $this->hasManyThroughDeep(Role::class, [User::class, 'role_user']);
     }
 }

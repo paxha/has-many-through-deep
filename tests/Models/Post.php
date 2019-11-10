@@ -11,7 +11,7 @@ class Post extends Model
 
     public function commentReplies()
     {
-        return $this->hasManyDeep(
+        return $this->hasManyThroughDeep(
             Comment::class,
             [Comment::class.' as alias'],
             [null, 'parent_id']
@@ -20,7 +20,7 @@ class Post extends Model
 
     public function commentRepliesFromRelations()
     {
-        return $this->hasManyDeepFromRelations(
+        return $this->hasManyThroughDeepFromRelations(
             $this->comments(),
             (new Comment)->setAlias('alias')->replies()
         );
@@ -33,7 +33,7 @@ class Post extends Model
 
     public function posts()
     {
-        return $this->hasManyDeep(
+        return $this->hasManyThroughDeep(
             self::class,
             [Like::class, User::class],
             [['likeable_type', 'likeable_id'], 'id'],
@@ -48,7 +48,7 @@ class Post extends Model
 
     public function users()
     {
-        return $this->hasManyDeep(
+        return $this->hasManyThroughDeep(
             User::class,
             [Like::class],
             [['likeable_type', 'likeable_id'], 'id'],
@@ -58,6 +58,6 @@ class Post extends Model
 
     public function usersFromRelations()
     {
-        return $this->hasManyDeepFromRelations($this->likes(), (new Like)->user());
+        return $this->hasManyThroughDeepFromRelations($this->likes(), (new Like)->user());
     }
 }

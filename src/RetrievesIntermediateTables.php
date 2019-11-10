@@ -1,6 +1,6 @@
 <?php
 
-namespace Staudenmeir\EloquentHasManyDeep;
+namespace Paxha\HasManyThroughDeep;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -25,7 +25,7 @@ trait RetrievesIntermediateTables
      */
     public function withIntermediate($class, array $columns = ['*'], $accessor = null)
     {
-        /** @var \Illuminate\Database\Eloquent\Model $instance */
+        /** @var Model $instance */
         $instance = new $class;
 
         $accessor = $accessor ?: Str::snake(class_basename($class));
@@ -111,10 +111,10 @@ trait RetrievesIntermediateTables
     /**
      * Get the intermediate relationship from the query.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      * @param array $intermediateTable
      * @param string $prefix
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
     protected function intermediateRelation(Model $model, array $intermediateTable, $prefix)
     {
@@ -130,7 +130,7 @@ trait RetrievesIntermediateTables
             return $class::fromRawAttributes($model, $attributes, $intermediateTable['table'], true);
         }
 
-        /** @var \Illuminate\Database\Eloquent\Model $instance */
+        /** @var Model $instance */
         $instance = new $class;
 
         return $instance->newFromBuilder($attributes);
@@ -139,7 +139,7 @@ trait RetrievesIntermediateTables
     /**
      * Get the intermediate attributes from a model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      * @param string $prefix
      * @return array
      */

@@ -1,7 +1,8 @@
 <?php
 
-namespace Staudenmeir\EloquentHasManyDeep;
+namespace Paxha\HasManyThroughDeep;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -17,10 +18,10 @@ trait ConcatenatesRelationships
     /**
      * Prepare a has-one-deep or has-many-deep relationship from existing relationships.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\Relation[] $relations
+     * @param Relation[] $relations
      * @return array
      */
-    protected function hasOneOrManyDeepFromRelations(array $relations)
+    protected function hasOneOrManyThroughDeepFromRelations(array $relations)
     {
         if (is_array($relations[0])) {
             $relations = $relations[0];
@@ -32,7 +33,7 @@ trait ConcatenatesRelationships
         $localKeys = [];
 
         foreach ($relations as $i => $relation) {
-            $method = $this->hasOneOrManyDeepRelationMethod($relation);
+            $method = $this->hasOneOrManyThroughDeepRelationMethod($relation);
 
             [$through, $foreignKeys, $localKeys] = $this->$method($relation, $through, $foreignKeys, $localKeys);
 
@@ -49,13 +50,13 @@ trait ConcatenatesRelationships
     /**
      * Prepare a has-one-deep or has-many-deep relationship from an existing belongs-to relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\BelongsTo $relation
-     * @param \Illuminate\Database\Eloquent\Model[] $through
+     * @param BelongsTo $relation
+     * @param Model[] $through
      * @param array $foreignKeys
      * @param array $localKeys
      * @return array
      */
-    protected function hasOneOrManyDeepFromBelongsTo(BelongsTo $relation, array $through, array $foreignKeys, array $localKeys)
+    protected function hasOneOrManyThroughDeepFromBelongsTo(BelongsTo $relation, array $through, array $foreignKeys, array $localKeys)
     {
         $foreignKeys[] = $relation->getOwnerKeyName();
 
@@ -67,13 +68,13 @@ trait ConcatenatesRelationships
     /**
      * Prepare a has-one-deep or has-many-deep relationship from an existing belongs-to-many relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\BelongsToMany $relation
-     * @param \Illuminate\Database\Eloquent\Model[] $through
+     * @param BelongsToMany $relation
+     * @param Model[] $through
      * @param array $foreignKeys
      * @param array $localKeys
      * @return array
      */
-    protected function hasOneOrManyDeepFromBelongsToMany(BelongsToMany $relation, array $through, array $foreignKeys, array $localKeys)
+    protected function hasOneOrManyThroughDeepFromBelongsToMany(BelongsToMany $relation, array $through, array $foreignKeys, array $localKeys)
     {
         $through[] = $relation->getTable();
 
@@ -89,13 +90,13 @@ trait ConcatenatesRelationships
     /**
      * Prepare a has-one-deep or has-many-deep relationship from an existing has-one or has-many relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\HasOneOrMany $relation
-     * @param \Illuminate\Database\Eloquent\Model[] $through
+     * @param HasOneOrMany $relation
+     * @param Model[] $through
      * @param array $foreignKeys
      * @param array $localKeys
      * @return array
      */
-    protected function hasOneOrManyDeepFromHasOneOrMany(HasOneOrMany $relation, array $through, array $foreignKeys, array $localKeys)
+    protected function hasOneOrManyThroughDeepFromHasOneOrMany(HasOneOrMany $relation, array $through, array $foreignKeys, array $localKeys)
     {
         $foreignKeys[] = $relation->getQualifiedForeignKeyName();
 
@@ -107,13 +108,13 @@ trait ConcatenatesRelationships
     /**
      * Prepare a has-one-deep or has-many-deep relationship from an existing has-many-through relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\HasManyThrough $relation
-     * @param \Illuminate\Database\Eloquent\Model[] $through
+     * @param HasManyThrough $relation
+     * @param Model[] $through
      * @param array $foreignKeys
      * @param array $localKeys
      * @return array
      */
-    protected function hasOneOrManyDeepFromHasManyThrough(HasManyThrough $relation, array $through, array $foreignKeys, array $localKeys)
+    protected function hasOneOrManyThroughDeepFromHasManyThrough(HasManyThrough $relation, array $through, array $foreignKeys, array $localKeys)
     {
         $through[] = get_class($relation->getParent());
 
@@ -129,13 +130,13 @@ trait ConcatenatesRelationships
     /**
      * Prepare a has-one-deep or has-many-deep relationship from an existing has-many-deep relationship.
      *
-     * @param \Staudenmeir\EloquentHasManyDeep\HasManyDeep $relation
-     * @param \Illuminate\Database\Eloquent\Model[] $through
+     * @param HasManyThrough $relation
+     * @param Model[] $through
      * @param array $foreignKeys
      * @param array $localKeys
      * @return array
      */
-    protected function hasOneOrManyDeepFromHasManyDeep(HasManyDeep $relation, array $through, array $foreignKeys, array $localKeys)
+    protected function hasOneOrManyThroughDeepFromHasManyDeep(HasManyThrough $relation, array $through, array $foreignKeys, array $localKeys)
     {
         foreach ($relation->getThroughParents() as $throughParent) {
             $segments = explode(' as ', $throughParent->getTable());
@@ -143,7 +144,7 @@ trait ConcatenatesRelationships
             $class = get_class($throughParent);
 
             if (isset($segments[1])) {
-                $class .= ' as '.$segments[1];
+                $class .= ' as ' . $segments[1];
             } elseif ($throughParent instanceof Pivot) {
                 $class = $throughParent->getTable();
             }
@@ -161,13 +162,13 @@ trait ConcatenatesRelationships
     /**
      * Prepare a has-one-deep or has-many-deep relationship from an existing morph-one or morph-many relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\MorphOneOrMany $relation
-     * @param \Illuminate\Database\Eloquent\Model[] $through
+     * @param MorphOneOrMany $relation
+     * @param Model[] $through
      * @param array $foreignKeys
      * @param array $localKeys
      * @return array
      */
-    protected function hasOneOrManyDeepFromMorphOneOrMany(MorphOneOrMany $relation, array $through, array $foreignKeys, array $localKeys)
+    protected function hasOneOrManyThroughDeepFromMorphOneOrMany(MorphOneOrMany $relation, array $through, array $foreignKeys, array $localKeys)
     {
         $foreignKeys[] = [$relation->getQualifiedMorphType(), $relation->getQualifiedForeignKeyName()];
 
@@ -179,13 +180,13 @@ trait ConcatenatesRelationships
     /**
      * Prepare a has-one-deep or has-many-deep relationship from an existing morph-to-many relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\MorphToMany $relation
-     * @param \Illuminate\Database\Eloquent\Model[] $through
+     * @param MorphToMany $relation
+     * @param Model[] $through
      * @param array $foreignKeys
      * @param array $localKeys
      * @return array
      */
-    protected function hasOneOrManyDeepFromMorphToMany(MorphToMany $relation, array $through, array $foreignKeys, array $localKeys)
+    protected function hasOneOrManyThroughDeepFromMorphToMany(MorphToMany $relation, array $through, array $foreignKeys, array $localKeys)
     {
         $through[] = $relation->getTable();
 
@@ -209,14 +210,14 @@ trait ConcatenatesRelationships
     /**
      * Get the relationship method name.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\Relation $relation
+     * @param Relation $relation
      * @return string
      */
-    protected function hasOneOrManyDeepRelationMethod(Relation $relation)
+    protected function hasOneOrManyThroughDeepRelationMethod(Relation $relation)
     {
         $classes = [
             BelongsTo::class,
-            HasManyDeep::class,
+            HasManyThrough::class,
             HasManyThrough::class,
             MorphOneOrMany::class,
             HasOneOrMany::class,
@@ -226,7 +227,7 @@ trait ConcatenatesRelationships
 
         foreach ($classes as $class) {
             if ($relation instanceof $class) {
-                return 'hasOneOrManyDeepFrom'.class_basename($class);
+                return 'hasOneOrManyDeepFrom' . class_basename($class);
             }
         }
 
@@ -236,8 +237,8 @@ trait ConcatenatesRelationships
     /**
      * Prepare the through parent class from an existing relationship and its successor.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\Relation $relation
-     * @param \Illuminate\Database\Eloquent\Relations\Relation $successor
+     * @param Relation $relation
+     * @param Relation $successor
      * @return string
      */
     protected function hasOneOrManyThroughParent(Relation $relation, Relation $successor)
@@ -250,7 +251,7 @@ trait ConcatenatesRelationships
             $segments = explode(' as ', $table);
 
             if (isset($segments[1])) {
-                $through .= ' as '.$segments[1];
+                $through .= ' as ' . $segments[1];
             }
         }
 

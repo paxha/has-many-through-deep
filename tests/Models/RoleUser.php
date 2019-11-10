@@ -3,7 +3,7 @@
 namespace Tests\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Staudenmeir\EloquentHasManyDeep\HasTableAlias;
+use Paxha\HasManyThroughDeep\HasTableAlias;
 
 class RoleUser extends Pivot
 {

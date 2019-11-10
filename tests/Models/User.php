@@ -10,22 +10,22 @@ class User extends Model
 
     public function likes()
     {
-        return $this->hasManyDeep(Like::class, [Post::class], [null, ['likeable_type', 'likeable_id']]);
+        return $this->hasManyThroughDeep(Like::class, [Post::class], [null, ['likeable_type', 'likeable_id']]);
     }
 
     public function permissions()
     {
-        return $this->hasManyDeep(Permission::class, ['role_user', Role::class]);
+        return $this->hasManyThroughDeep(Permission::class, ['role_user', Role::class]);
     }
 
     public function permissionsFromRelations()
     {
-        return $this->hasManyDeepFromRelations($this->roles(), (new Role)->permissions());
+        return $this->hasManyThroughDeepFromRelations($this->roles(), (new Role)->permissions());
     }
 
     public function players()
     {
-        return $this->hasManyDeep(self::class, [Club::class, Team::class]);
+        return $this->hasManyThroughDeep(self::class, [Club::class, Team::class]);
     }
 
     public function posts()
@@ -40,6 +40,6 @@ class User extends Model
 
     public function tagsFromRelations()
     {
-        return $this->hasManyDeepFromRelations($this->posts(), (new Post)->tags());
+        return $this->hasManyThroughDeepFromRelations($this->posts(), (new Post)->tags());
     }
 }

@@ -1,10 +1,11 @@
 <?php
 
-namespace Staudenmeir\EloquentHasManyDeep;
+namespace Paxha\HasManyThroughDeep;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
 trait HasRelationships
@@ -18,22 +19,22 @@ trait HasRelationships
      * @param array $through
      * @param array $foreignKeys
      * @param array $localKeys
-     * @return \Staudenmeir\EloquentHasManyDeep\HasManyDeep
+     * @return HasManyThroughDeep
      */
-    public function hasManyDeep($related, array $through, array $foreignKeys = [], array $localKeys = [])
+    public function hasManyThroughDeep($related, array $through, array $foreignKeys = [], array $localKeys = [])
     {
-        return $this->newHasManyDeep(...$this->hasOneOrManyDeep($related, $through, $foreignKeys, $localKeys));
+        return $this->newHasManyThroughDeep(...$this->hasOneOrManyThroughDeep($related, $through, $foreignKeys, $localKeys));
     }
 
     /**
      * Define a has-many-deep relationship from existing relationships.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\Relation ...$relations
-     * @return \Staudenmeir\EloquentHasManyDeep\HasManyDeep
+     * @param Relation ...$relations
+     * @return HasManyThroughDeep
      */
-    public function hasManyDeepFromRelations(...$relations)
+    public function hasManyThroughDeepFromRelations(...$relations)
     {
-        return $this->hasManyDeep(...$this->hasOneOrManyDeepFromRelations($relations));
+        return $this->hasManyThroughDeep(...$this->hasOneOrManyThroughDeepFromRelations($relations));
     }
 
     /**
@@ -43,22 +44,22 @@ trait HasRelationships
      * @param array $through
      * @param array $foreignKeys
      * @param array $localKeys
-     * @return \Staudenmeir\EloquentHasManyDeep\HasOneDeep
+     * @return HasOneThroughDeep
      */
-    public function hasOneDeep($related, array $through, array $foreignKeys = [], array $localKeys = [])
+    public function hasOneThroughDeep($related, array $through, array $foreignKeys = [], array $localKeys = [])
     {
-        return $this->newHasOneDeep(...$this->hasOneOrManyDeep($related, $through, $foreignKeys, $localKeys));
+        return $this->newHasOneThroughDeep(...$this->hasOneOrManyThroughDeep($related, $through, $foreignKeys, $localKeys));
     }
 
     /**
      * Define a has-one-deep relationship from existing relationships.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\Relation ...$relations
-     * @return \Staudenmeir\EloquentHasManyDeep\HasOneDeep
+     * @param Relation ...$relations
+     * @return HasOneThroughDeep
      */
-    public function hasOneDeepFromRelations(...$relations)
+    public function hasOneThroughDeepFromRelations(...$relations)
     {
-        return $this->hasOneDeep(...$this->hasOneOrManyDeepFromRelations($relations));
+        return $this->hasOneThroughDeep(...$this->hasOneOrManyThroughDeepFromRelations($relations));
     }
 
     /**
@@ -70,16 +71,19 @@ trait HasRelationships
      * @param array $localKeys
      * @return array
      */
-    protected function hasOneOrManyDeep($related, array $through, array $foreignKeys, array $localKeys)
+    protected function hasOneOrManyThroughDeep($related, array $through, array $foreignKeys, array $localKeys)
     {
-        /** @var \Illuminate\Database\Eloquent\Model $relatedInstance */
+        /**
+         *
+         * @var Model $relatedInstance
+         */
         $relatedInstance = $this->newRelatedInstance($related);
 
-        $throughParents = $this->hasOneOrManyDeepThroughParents($through);
+        $throughParents = $this->hasOneOrManyThroughDeepParents($through);
 
-        $foreignKeys = $this->hasOneOrManyDeepForeignKeys($relatedInstance, $throughParents, $foreignKeys);
+        $foreignKeys = $this->hasOneOrManyThroughDeepForeignKeys($relatedInstance, $throughParents, $foreignKeys);
 
-        $localKeys = $this->hasOneOrManyDeepLocalKeys($relatedInstance, $throughParents, $localKeys);
+        $localKeys = $this->hasOneOrManyThroughDeepLocalKeys($relatedInstance, $throughParents, $localKeys);
 
         return [$relatedInstance->newQuery(), $this, $throughParents, $foreignKeys, $localKeys];
     }
@@ -90,7 +94,7 @@ trait HasRelationships
      * @param array $through
      * @return array
      */
-    protected function hasOneOrManyDeepThroughParents(array $through)
+    protected function hasOneOrManyThroughDeepParents(array $through)
     {
         return array_map(function ($class) {
             $segments = preg_split('/\s+as\s+/i', $class);
@@ -100,7 +104,7 @@ trait HasRelationships
                 : (new Pivot)->setTable($segments[0]);
 
             if (isset($segments[1])) {
-                $instance->setTable($instance->getTable().' as '.$segments[1]);
+                $instance->setTable($instance->getTable() . ' as ' . $segments[1]);
             }
 
             return $instance;
@@ -110,15 +114,15 @@ trait HasRelationships
     /**
      * Prepare the foreign keys for a has-one-deep or has-many-deep relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Model $related
-     * @param \Illuminate\Database\Eloquent\Model[] $throughParents
+     * @param Model $related
+     * @param Model[] $throughParents
      * @param array $foreignKeys
      * @return array
      */
-    protected function hasOneOrManyDeepForeignKeys(Model $related, array $throughParents, array $foreignKeys)
+    protected function hasOneOrManyThroughDeepForeignKeys(Model $related, array $throughParents, array $foreignKeys)
     {
         foreach (array_merge([$this], $throughParents) as $i => $instance) {
-            /** @var \Illuminate\Database\Eloquent\Model $instance */
+            /** @var Model $instance */
             if (!isset($foreignKeys[$i])) {
                 if ($instance instanceof Pivot) {
                     $foreignKeys[$i] = ($throughParents[$i] ?? $related)->getKeyName();
@@ -134,15 +138,18 @@ trait HasRelationships
     /**
      * Prepare the local keys for a has-one-deep or has-many-deep relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Model $related
-     * @param \Illuminate\Database\Eloquent\Model[] $throughParents
+     * @param Model $related
+     * @param Model[] $throughParents
      * @param array $localKeys
      * @return array
      */
-    protected function hasOneOrManyDeepLocalKeys(Model $related, array $throughParents, array $localKeys)
+    protected function hasOneOrManyThroughDeepLocalKeys(Model $related, array $throughParents, array $localKeys)
     {
         foreach (array_merge([$this], $throughParents) as $i => $instance) {
-            /** @var \Illuminate\Database\Eloquent\Model $instance */
+            /**
+             *
+             * @var Model $instance
+             */
             if (!isset($localKeys[$i])) {
                 if ($instance instanceof Pivot) {
                     $localKeys[$i] = ($throughParents[$i] ?? $related)->getForeignKey();
@@ -158,30 +165,30 @@ trait HasRelationships
     /**
      * Instantiate a new HasManyDeep relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $farParent
-     * @param \Illuminate\Database\Eloquent\Model[] $throughParents
+     * @param Builder $query
+     * @param Model $farParent
+     * @param Model[] $throughParents
      * @param array $foreignKeys
      * @param array $localKeys
-     * @return \Staudenmeir\EloquentHasManyDeep\HasManyDeep
+     * @return HasManyThroughDeep
      */
-    protected function newHasManyDeep(Builder $query, Model $farParent, array $throughParents, array $foreignKeys, array $localKeys)
+    protected function newHasManyThroughDeep(Builder $query, Model $farParent, array $throughParents, array $foreignKeys, array $localKeys)
     {
-        return new HasManyDeep($query, $farParent, $throughParents, $foreignKeys, $localKeys);
+        return new HasManyThroughDeep($query, $farParent, $throughParents, $foreignKeys, $localKeys);
     }
 
     /**
-     * Instantiate a new HasOneDeep relationship.
+     * Instantiate a new HasOneThroughDeep relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $farParent
-     * @param \Illuminate\Database\Eloquent\Model[] $throughParents
+     * @param Builder $query
+     * @param Model $farParent
+     * @param Model[] $throughParents
      * @param array $foreignKeys
      * @param array $localKeys
-     * @return \Staudenmeir\EloquentHasManyDeep\HasOneDeep
+     * @return HasOneThroughDeep
      */
-    protected function newHasOneDeep(Builder $query, Model $farParent, array $throughParents, array $foreignKeys, array $localKeys)
+    protected function newHasOneThroughDeep(Builder $query, Model $farParent, array $throughParents, array $foreignKeys, array $localKeys)
     {
-        return new HasOneDeep($query, $farParent, $throughParents, $foreignKeys, $localKeys);
+        return new HasOneThroughDeep($query, $farParent, $throughParents, $foreignKeys, $localKeys);
     }
 }

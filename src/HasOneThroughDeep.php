@@ -1,12 +1,12 @@
 <?php
 
-namespace Staudenmeir\EloquentHasManyDeep;
+namespace Paxha\HasManyThroughDeep;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
 
-class HasOneDeep extends HasManyDeep
+class HasOneThroughDeep extends HasManyThroughDeep
 {
     use SupportsDefaultModels;
 
@@ -40,7 +40,7 @@ class HasOneDeep extends HasManyDeep
      * Match the eagerly loaded results to their parents.
      *
      * @param array $models
-     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param Collection $results
      * @param string $relation
      * @return array
      */
@@ -63,8 +63,8 @@ class HasOneDeep extends HasManyDeep
     /**
      * Make a new related instance for the given model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $parent
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param Model $parent
+     * @return Model
      */
     public function newRelatedInstanceFor(Model $parent)
     {

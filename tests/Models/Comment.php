@@ -2,8 +2,8 @@
 
 namespace Tests\Models;
 
-use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
-use Staudenmeir\EloquentHasManyDeep\HasTableAlias;
+use Paxha\EloquentEagerLimit\HasEagerLimit;
+use Paxha\HasManyThroughDeep\HasTableAlias;
 
 class Comment extends Model
 {
