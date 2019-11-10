@@ -13,7 +13,7 @@ Supports Laravel 5.5.29+.
 
 ## Installation
 
-    composer require paxha/eloquent-has-many-deep
+    composer require paxha/has-many-through-deep
 
 ## Versions
 
