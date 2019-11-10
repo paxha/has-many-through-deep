@@ -48,7 +48,7 @@ Consider the [documentation example](https://laravel.com/docs/eloquent-relations
 ```php
 class Country extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function comments()
     {
@@ -64,7 +64,7 @@ By default, `hasManyDeep()` uses the Eloquent conventions for foreign and local 
 ```php
 class Country extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function comments()
     {
@@ -91,7 +91,7 @@ You can use `null` placeholders for default keys:
 ```php
 class Country extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function comments()
     {
@@ -112,7 +112,7 @@ Add the pivot table to the intermediate models:
 ```php
 class User extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function permissions()
     {
@@ -126,7 +126,7 @@ If you specify custom keys, remember to swap the foreign and local key on the "r
 ```php
 class User extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function permissions()
     {
@@ -160,7 +160,7 @@ Specify the polymorphic foreign keys as an array, starting with the `*_type` col
 ```php
 class User extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function postComments()
     {
@@ -185,7 +185,7 @@ Add the pivot table to the intermediate models and specify the polymorphic forei
 ```php
 class User extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function postTags()
     {
@@ -213,7 +213,7 @@ Add the pivot table to the intermediate models and specify the polymorphic local
 ```php
 class Tag extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function postComments()
     {
@@ -237,7 +237,7 @@ Swap the foreign and local key:
 ```php
 class Tag extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function postAuthors()
     {
@@ -258,7 +258,7 @@ You can also define a `HasManyDeep` relationship by concatenating existing relat
 ```php
 class Country extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function comments()
     {
@@ -287,7 +287,7 @@ Define a `HasOneDeep` relationship if you only want to retrieve a single related
 ```php
 class Country extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function latestComment()
     {
@@ -390,7 +390,7 @@ If your relationship path contains the same model multiple times, you can specif
 ```php
 class Post extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function commentReplies()
     {
@@ -404,7 +404,7 @@ Use the `HasTableAlias` trait in the models you are aliasing:
 ```php
 class Comment extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasTableAlias;
+    use \Paxha\EloquentHasManyDeep\HasTableAlias;
 }
 ```
 
@@ -413,7 +413,7 @@ For pivot tables, this requires custom models:
 ```php
 class User extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function permissions()
     {
@@ -423,7 +423,7 @@ class User extends Model
 
 class RoleUser extends Pivot
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasTableAlias;
+    use \Paxha\EloquentHasManyDeep\HasTableAlias;
 }
 ```
 
@@ -432,7 +432,7 @@ Use `setAlias()` to specify a table alias when concatenating existing relationsh
 ```php
 class Post extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function commentReplies()
     {
@@ -450,7 +450,7 @@ class Post extends Model
 
 class Comment extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasTableAlias;
+    use \Paxha\EloquentHasManyDeep\HasTableAlias;
 
     public function replies()
     {
@@ -466,7 +466,7 @@ By default, soft-deleted intermediate models will be excluded from the result. U
 ```php
 class Country extends Model
 {
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+    use \Paxha\EloquentHasManyDeep\HasRelationships;
 
     public function comments()
     {
